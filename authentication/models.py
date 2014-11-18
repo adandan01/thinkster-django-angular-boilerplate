@@ -17,7 +17,7 @@ class UserProfile(models.Model):
     @receiver(post_save, sender=User)
     def create_profile_for_user(sender, instance=None, created=False, **kwargs):
         if created:
-            UserProfile.objects.get_or_created(user=instance)
+            UserProfile.objects.get_or_create(user=instance)
 
     @receiver(pre_delete, sender=User)
     def delete_profile_for_user(sender, instance=None, **kwargs):
