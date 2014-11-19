@@ -18,9 +18,11 @@ class UserSerializer(serializers.ModelSerializer):
         if password:
             user.set_password(password)
 
+        return user
+
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(source='pk', read_only=True)
+    id = serializers.PrimaryKeyRelatedField(source='user', read_only=True)
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.CharField(source='user.email', required=False)
     first_name = serializers.CharField(
@@ -29,7 +31,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ('id', 'username', 'email', 'first_name',
+        fields = ('id',  'username', 'email', 'first_name',
                   'last_name', 'tagline', 'created_at', 'updated_at', )
         read_only_fields = ('created_at', 'updated_at', )
 
@@ -39,8 +41,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
         if profile:
             user = profile.user
-            user.email = attrs.get('email', user.email)
-            user.first_name = attrs.get('first_name', user.first_name)
-            user.last_name = attrs.get('last_name', user.last_name)
+            user.email = attrs.get('user.email', user.email)
+            user.first_name = attrs.get('user.first_name', user.first_name)
+            user.last_name = attrs.get('user.last_name', user.last_name)
             user.save()
         return profile
