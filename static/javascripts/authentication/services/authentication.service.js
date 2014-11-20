@@ -10,7 +10,7 @@
             register: register,
             login: login,
             getAuthenticatedUser: getAuthenticatedUser,
-            isAuthentiated: isAuthentiated,
+            isAuthenticated: isAuthenticated,
             setAuthenticatedUser: setAuthenticatedUser,
             unauthenticate: unauthenticate
         };
@@ -56,7 +56,7 @@
             return JSON.parse($cookies.authenticatedUser);
         }
 
-        function isAuthentiated() {
+        function isAuthenticated() {
             return !!$cookies.authenticatedUser;
         }
 
