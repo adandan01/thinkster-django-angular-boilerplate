@@ -1,17 +1,20 @@
 import json
 
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 from django.contrib.auth.models import User
-from rest_framework import generics, status, views
+from rest_framework import generics, status, views, permissions
 from rest_framework.response import Response
 from authentication.serializers import UserSerializer
+
 
 class UserCreateView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+
 class LoginView(views.APIView):
+
     def post(self, request, format=None):
         data = json.loads(request.body)
 
@@ -29,6 +32,14 @@ class LoginView(views.APIView):
                 return Response(serialized.data)
             else:
                 return Response({'error': 'Awkward! Your account has been disabled.',
-                                }, status = status.HTTP_401_UNAUTHORIZED)
+                                 }, status=status.HTTP_401_UNAUTHORIZED)
         else:
-            return Response({'error': 'Looks like your username or password is wrong'}, status = status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Looks like your username or password is wrong'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LogoutView(views.APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request, format=None):
+        logout(request)
+        return Response({'success': True})

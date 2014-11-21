@@ -9,6 +9,7 @@
         var Authentication = {
             register: register,
             login: login,
+            logout: logout,
             getAuthenticatedUser: getAuthenticatedUser,
             isAuthenticated: isAuthenticated,
             setAuthenticatedUser: setAuthenticatedUser,
@@ -23,14 +24,14 @@
                 password: password,
                 email: email
             }).then(registerSuccessFn, registerErrorFn);
-        }
 
-        function registerSuccessFn(data, status, headers, config) {
-            Authentication.login(username, password);
-        }
+            function registerSuccessFn(data, status, headers, config) {
+                Authentication.login(username, password);
+            }
 
-        function registerErrorFn(data, status, headers, config) {
-            console.log('Epic Failure!');
+            function registerErrorFn(data, status, headers, config) {
+                console.log('Epic Failure!');
+            }
         }
 
         function login(username, password) {
@@ -38,16 +39,32 @@
                 username: username,
                 password: password
             }).then(loginSuccessFn, loginErrorFn);
+
+            function loginSuccessFn(data, status, headers, config) {
+                Authentication.setAuthenticatedUser(data.data);
+                window.location = '/';
+            }
+
+            function loginErrorFn(data, status, headers, config) {
+                console.error('Epic failure!');
+            }
         }
 
-        function loginSuccessFn(data, status, headers, config) {
-            Authentication.setAuthenticatedUser(data.data);
-            window.location = '/';
+        function logout(username, password) {
+            return $http.post('/api/v1/auth/logout/').then(logutSuccessFn, logutErrorFn);
+
+            function logutSuccessFn(data, status, headers, config) {
+                Authentication.unauthenticate();
+                window.location = '/';
+            }
+
+            function logutErrorFn(data, status, headers, config) {
+                console.error('Epic failure!');
+            }
         }
 
-        function loginErrorFn(data, status, headers, config) {
-            console.error('Epic failure!');
-        }
+
+
 
         function getAuthenticatedUser() {
             if (!$cookies.authenicatedUser) {
